@@ -1,10 +1,18 @@
 package pro.tremblay.ehcachequestions.utils;
 
 import org.ehcache.CacheManager;
+import org.ehcache.PersistentCacheManager;
+import org.ehcache.clustered.client.config.ClusteredStoreConfiguration;
+import org.ehcache.clustered.client.config.builders.ClusteredResourcePoolBuilder;
+import org.ehcache.clustered.client.config.builders.ClusteringServiceConfigurationBuilder;
+import org.ehcache.clustered.client.config.builders.ServerSideConfigurationBuilder;
+import org.ehcache.clustered.common.Consistency;
 import org.ehcache.config.Configuration;
+import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.CacheManagerBuilder;
+import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.ehcache.config.units.EntryUnit;
-import org.ehcache.core.EhcacheManager;
+import org.ehcache.config.units.MemoryUnit;
 import org.ehcache.jsr107.EhcacheCachingProvider;
 
 import java.lang.management.ManagementFactory;
@@ -122,7 +130,7 @@ public final class Utils {
         printMetrics(name);
     }
 
-    public static CacheManager getLocalCacheManager(String cacheName) {
+    public static javax.cache.CacheManager getLocalCacheManager(String cacheName) {
         CacheManagerBuilder<CacheManager> cacheManagerBuilder = newCacheManagerBuilder()
             .withCache(cacheName,
                 newCacheConfigurationBuilder(
@@ -135,10 +143,29 @@ public final class Utils {
         Configuration conf = extractConfiguration(cacheManagerBuilder);
         EhcacheCachingProvider provider = (EhcacheCachingProvider) Caching.getCachingProvider();
 
-        return provider.getCacheManager(URI.create("file://ehcache.xml"), conf).unwrap(EhcacheManager.class);
+        return provider.getCacheManager(URI.create("file://ehcache.xml"), conf);
     }
 
-    private static Configuration extractConfiguration(CacheManagerBuilder<CacheManager> cacheManagerBuilder) {
+    public static javax.cache.CacheManager getClusteredCacheManager(String cacheName) {
+        ClusteringServiceConfigurationBuilder clusteringServiceConfigurationBuilder = ClusteringServiceConfigurationBuilder.cluster(URI.create("terracotta://localhost:9510"));
+        ServerSideConfigurationBuilder serverSideConfigurationBuilder = clusteringServiceConfigurationBuilder.autoCreate()
+            .defaultServerResource("primary-server-resource");
+
+        CacheManagerBuilder<PersistentCacheManager> cacheManagerBuilder =
+            CacheManagerBuilder.newCacheManagerBuilder()
+                .with(serverSideConfigurationBuilder)
+                .withCache(cacheName, CacheConfigurationBuilder.newCacheConfigurationBuilder(Long.class, String.class,
+                    ResourcePoolsBuilder.newResourcePoolsBuilder()
+                        .with(ClusteredResourcePoolBuilder.clusteredDedicated(100, MemoryUnit.KB))
+                ).add(new ClusteredStoreConfiguration(Consistency.EVENTUAL)));
+
+        Configuration conf = extractConfiguration(cacheManagerBuilder);
+        EhcacheCachingProvider provider = (EhcacheCachingProvider) Caching.getCachingProvider();
+
+        return provider.getCacheManager(URI.create("file://ehcache.xml"), conf);
+    }
+
+    private static Configuration extractConfiguration(CacheManagerBuilder<? extends CacheManager> cacheManagerBuilder) {
         CacheManager persistentCacheManager = cacheManagerBuilder.build();
         return persistentCacheManager.getRuntimeConfiguration();
     }
