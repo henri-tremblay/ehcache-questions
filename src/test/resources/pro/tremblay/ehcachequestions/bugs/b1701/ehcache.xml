@@ -1,0 +1,14 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.ehcache.org/v3" xmlns:jsr107="http://www.ehcache.org/v3/jsr107" xmlns:tx="http://www.ehcache.org/v3/tx" xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.1.xsd http://www.ehcache.org/v3/jsr107 http://www.ehcache.org/schema/ehcache-107-ext-3.1.xsd">
+    <service>
+        <jsr107:defaults enable-management="false" enable-statistics="true"/>
+    </service>
+    <service>
+        <tx:jta-tm transaction-manager-lookup-class="org.ehcache.transactions.xa.txmgr.btm.BitronixTransactionManagerLookup"/>
+    </service>
+    <cache alias="mycache">
+        <key-type>java.io.Serializable</key-type>
+        <value-type>java.io.Serializable</value-type>
+        <heap unit="entries">1000</heap>
+        <tx:xa-store unique-XAResource-id="xaCache"/>
+    </cache>
+</config>

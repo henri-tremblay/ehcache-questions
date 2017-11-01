@@ -1,7 +1,7 @@
 package pro.tremblay.ehcachequestions.stackoverflow.q41065826;
 
 import org.ehcache.Cache;
-import org.ehcache.PersistentCacheManager;
+import org.ehcache.CacheManager;
 import org.ehcache.config.units.EntryUnit;
 import org.ehcache.config.units.MemoryUnit;
 import org.slf4j.Logger;
@@ -16,9 +16,9 @@ public class Main {
   private static final Logger log = LoggerFactory.getLogger(Main.class);
 
   public static void main(String[] args) {
-    try(PersistentCacheManager persistentCacheManager =
+    try(CacheManager persistentCacheManager =
         newCacheManagerBuilder()
-            .with(persistence("target/cache"))
+//            .with(persistence("target/cache"))
             .withCache("test-cache",
                 newCacheConfigurationBuilder(
                     Integer.class, String.class,

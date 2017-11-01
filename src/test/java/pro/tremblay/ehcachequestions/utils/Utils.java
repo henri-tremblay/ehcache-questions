@@ -154,6 +154,7 @@ public final class Utils {
         CacheManagerBuilder<PersistentCacheManager> cacheManagerBuilder =
             CacheManagerBuilder.newCacheManagerBuilder()
                 .with(serverSideConfigurationBuilder)
+                .with(persistence("target/cache"))
                 .withCache(cacheName, CacheConfigurationBuilder.newCacheConfigurationBuilder(Long.class, String.class,
                     ResourcePoolsBuilder.newResourcePoolsBuilder()
                         .with(ClusteredResourcePoolBuilder.clusteredDedicated(100, MemoryUnit.KB))

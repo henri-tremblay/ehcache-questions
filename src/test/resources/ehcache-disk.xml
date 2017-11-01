@@ -1,0 +1,9 @@
+<ehcache>
+  <diskStore path="logs/cache"/>
+  <defaultCache memoryStoreEvictionPolicy="LRU"
+                maxBytesLocalHeap="512m"
+                maxBytesLocalDisk="1024m">
+    <persistence strategy = "localTempSwap"/>
+    <sizeOfPolicy maxDepth="1000000000" />
+  </defaultCache>
+</ehcache>

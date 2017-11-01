@@ -1,0 +1,19 @@
+<config xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+           xmlns='http://www.ehcache.org/v3'
+           xsi:schemaLocation="http://www.ehcache.org/v3
+  http://www.ehcache.org/schema/ehcache-core-3.0.xsd">
+    
+    <thread-pools>
+        <thread-pool alias="defaultDiskPool" min-size="1" max-size="3"/>
+    </thread-pools>
+
+    <!--<event-dispatch thread-pool="defaultDiskPool"/>-->
+
+    <cache-template name="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.lang.String</value-type>
+        <heap unit="entries">1</heap>
+    </cache-template>
+
+    <cache alias="cache" uses-template="default"/>
+</config>

@@ -1,0 +1,24 @@
+<config
+        xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+        xmlns='http://www.ehcache.org/v3'
+        xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.1.xsd">
+
+    <persistence directory="target/cachexml"/>
+    <heap-store>
+        <max-object-size unit="MB">20</max-object-size>
+    </heap-store>
+
+    <cache alias="pdfCache" >
+        <key-type>java.lang.String</key-type>
+        <value-type>pro.tremblay.ehcachequestions.stackoverflow.q42057073.PDFTO</value-type>
+        <expiry>
+            <tti unit="hours">12</tti>
+        </expiry>
+
+        <resources>
+            <heap unit="entries">4</heap>
+            <disk persistent="true" unit="MB">64</disk>
+        </resources>
+    </cache>
+
+</config>
